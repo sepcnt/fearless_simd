@@ -12655,6 +12655,32 @@ pub trait SimdBase<S: Simd>:
     #[doc = r""]
     #[doc = r" The slice must be exactly the size of the SIMD vector."]
     fn store_slice(&self, slice: &mut [Self::Element]);
+    #[doc = r" Load up to one vector from the beginning of `src`, in lane order."]
+    #[doc = r""]
+    #[doc = r" Missing lanes are set to `fill`; elements past the first `Self::LEN` are ignored."]
+    #[doc = r" An empty slice produces a splat. No padding or vector alignment is required."]
+    #[inline(always)]
+    fn load_prefix_or(simd: S, src: &[Self::Element], fill: Self::Element) -> Self {
+        if let Some(full) = src.get(..Self::LEN) {
+            Self::from_slice(simd, full)
+        } else {
+            let mut v = Self::splat(simd, fill);
+            v.as_mut_slice()[..src.len()].copy_from_slice(src);
+            v
+        }
+    }
+    #[doc = r" Write the first `min(dst.len(), Self::LEN)` lanes to `dst`, in lane order."]
+    #[doc = r""]
+    #[doc = r" An empty destination is left untouched, as are any elements beyond the"]
+    #[doc = r" first vector. No padding or vector alignment is required."]
+    #[inline(always)]
+    fn store_prefix(&self, dst: &mut [Self::Element]) {
+        if let Some(full) = dst.get_mut(..Self::LEN) {
+            self.store_slice(full);
+        } else {
+            dst.copy_from_slice(&self.as_slice()[..dst.len()]);
+        }
+    }
     #[doc = r" Create a SIMD vector from its corresponding lane array."]
     #[inline(always)]
     fn load_array(simd: S, val: Self::Array) -> Self {

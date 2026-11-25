@@ -368,6 +368,32 @@ fn mk_simd_base() -> TokenStream {
             ///
             /// The slice must be exactly the size of the SIMD vector.
             fn store_slice(&self, slice: &mut [Self::Element]);
+            /// Load up to one vector from the beginning of `src`, in lane order.
+            ///
+            /// Missing lanes are set to `fill`; elements past the first `Self::LEN` are ignored.
+            /// An empty slice produces a splat. No padding or vector alignment is required.
+            #[inline(always)]
+            fn load_prefix_or(simd: S, src: &[Self::Element], fill: Self::Element) -> Self {
+                if let Some(full) = src.get(..Self::LEN) {
+                    Self::from_slice(simd, full)
+                } else {
+                    let mut v = Self::splat(simd, fill);
+                    v.as_mut_slice()[..src.len()].copy_from_slice(src);
+                    v
+                }
+            }
+            /// Write the first `min(dst.len(), Self::LEN)` lanes to `dst`, in lane order.
+            ///
+            /// An empty destination is left untouched, as are any elements beyond the
+            /// first vector. No padding or vector alignment is required.
+            #[inline(always)]
+            fn store_prefix(&self, dst: &mut [Self::Element]) {
+                if let Some(full) = dst.get_mut(..Self::LEN) {
+                    self.store_slice(full);
+                } else {
+                    dst.copy_from_slice(&self.as_slice()[..dst.len()]);
+                }
+            }
             /// Create a SIMD vector from its corresponding lane array.
             #[inline(always)]
             fn load_array(simd: S, val: Self::Array) -> Self {
