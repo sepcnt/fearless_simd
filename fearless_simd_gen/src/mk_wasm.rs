@@ -1545,6 +1545,7 @@ impl Level for WasmSimd128 {
                     }
                 }
             }
+            OpSig::MinMax => crate::generic::generic_op(&op, vec_ty),
             OpSig::Interleave => {
                 let zip_low = generic_op_name("zip_low", vec_ty);
                 let zip_high = generic_op_name("zip_high", vec_ty);

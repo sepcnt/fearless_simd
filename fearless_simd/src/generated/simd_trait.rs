@@ -541,6 +541,11 @@ pub trait Simd:
         mask: mask8x16<Self>,
         merge: i8x16<Self>,
     ) -> i8x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i8x16(self, a: i8x16<Self>, b: i8x16<Self>) -> (i8x16<Self>, i8x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_i8x16(self, a: i8x16<Self>) -> i8x16<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -706,6 +711,11 @@ pub trait Simd:
         mask: mask8x16<Self>,
         merge: u8x16<Self>,
     ) -> u8x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u8x16(self, a: u8x16<Self>, b: u8x16<Self>) -> (u8x16<Self>, u8x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_u8x16(self, a: u8x16<Self>) -> u8x16<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -947,6 +957,11 @@ pub trait Simd:
         mask: mask16x8<Self>,
         merge: i16x8<Self>,
     ) -> i16x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i16x8(self, a: i16x8<Self>, b: i16x8<Self>) -> (i16x8<Self>, i16x8<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_i16x8(self, a: i16x8<Self>) -> i16x8<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -1141,6 +1156,11 @@ pub trait Simd:
         mask: mask16x8<Self>,
         merge: u16x8<Self>,
     ) -> u16x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u16x8(self, a: u16x8<Self>, b: u16x8<Self>) -> (u16x8<Self>, u16x8<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_u16x8(self, a: u16x8<Self>) -> u16x8<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -1390,6 +1410,11 @@ pub trait Simd:
         mask: mask32x4<Self>,
         merge: i32x4<Self>,
     ) -> i32x4<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i32x4(self, a: i32x4<Self>, b: i32x4<Self>) -> (i32x4<Self>, i32x4<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_i32x4(self, a: i32x4<Self>) -> i32x4<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -1586,6 +1611,11 @@ pub trait Simd:
         mask: mask32x4<Self>,
         merge: u32x4<Self>,
     ) -> u32x4<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u32x4(self, a: u32x4<Self>, b: u32x4<Self>) -> (u32x4<Self>, u32x4<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_u32x4(self, a: u32x4<Self>) -> u32x4<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -2052,6 +2082,12 @@ pub trait Simd:
         mask: mask64x2<Self>,
         merge: i64x2<Self>,
     ) -> i64x2<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i64x2(self, a: i64x2<Self>, b: i64x2<Self>) -> (i64x2<Self>, i64x2<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_i64x2(self, a: i64x2<Self>) -> i64x2<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -2238,6 +2274,12 @@ pub trait Simd:
         mask: mask64x2<Self>,
         merge: u64x2<Self>,
     ) -> u64x2<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u64x2(self, a: u64x2<Self>, b: u64x2<Self>) -> (u64x2<Self>, u64x2<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones_u64x2(self, a: u64x2<Self>) -> u64x2<Self>;
     #[doc = "Return the number of zeros in the binary representation of each element."]
@@ -2974,6 +3016,11 @@ pub trait Simd:
         mask: mask8x32<Self>,
         merge: i8x32<Self>,
     ) -> i8x32<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i8x32(self, a: i8x32<Self>, b: i8x32<Self>) -> (i8x32<Self>, i8x32<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i8x32(self, a: i8x32<Self>) -> i8x32<Self> {
@@ -3378,6 +3425,11 @@ pub trait Simd:
         mask: mask8x32<Self>,
         merge: u8x32<Self>,
     ) -> u8x32<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u8x32(self, a: u8x32<Self>, b: u8x32<Self>) -> (u8x32<Self>, u8x32<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u8x32(self, a: u8x32<Self>) -> u8x32<Self> {
@@ -3933,6 +3985,11 @@ pub trait Simd:
         mask: mask16x16<Self>,
         merge: i16x16<Self>,
     ) -> i16x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i16x16(self, a: i16x16<Self>, b: i16x16<Self>) -> (i16x16<Self>, i16x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i16x16(self, a: i16x16<Self>) -> i16x16<Self> {
@@ -4383,6 +4440,11 @@ pub trait Simd:
         mask: mask16x16<Self>,
         merge: u16x16<Self>,
     ) -> u16x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u16x16(self, a: u16x16<Self>, b: u16x16<Self>) -> (u16x16<Self>, u16x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u16x16(self, a: u16x16<Self>) -> u16x16<Self> {
@@ -4968,6 +5030,11 @@ pub trait Simd:
         mask: mask32x8<Self>,
         merge: i32x8<Self>,
     ) -> i32x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i32x8(self, a: i32x8<Self>, b: i32x8<Self>) -> (i32x8<Self>, i32x8<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i32x8(self, a: i32x8<Self>) -> i32x8<Self> {
@@ -5420,6 +5487,11 @@ pub trait Simd:
         mask: mask32x8<Self>,
         merge: u32x8<Self>,
     ) -> u32x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u32x8(self, a: u32x8<Self>, b: u32x8<Self>) -> (u32x8<Self>, u32x8<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u32x8(self, a: u32x8<Self>) -> u32x8<Self> {
@@ -6510,6 +6582,12 @@ pub trait Simd:
         mask: mask64x4<Self>,
         merge: i64x4<Self>,
     ) -> i64x4<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i64x4(self, a: i64x4<Self>, b: i64x4<Self>) -> (i64x4<Self>, i64x4<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i64x4(self, a: i64x4<Self>) -> i64x4<Self> {
@@ -6911,6 +6989,12 @@ pub trait Simd:
         mask: mask64x4<Self>,
         merge: u64x4<Self>,
     ) -> u64x4<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u64x4(self, a: u64x4<Self>, b: u64x4<Self>) -> (u64x4<Self>, u64x4<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u64x4(self, a: u64x4<Self>) -> u64x4<Self> {
@@ -7932,6 +8016,11 @@ pub trait Simd:
         mask: mask8x64<Self>,
         merge: i8x64<Self>,
     ) -> i8x64<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i8x64(self, a: i8x64<Self>, b: i8x64<Self>) -> (i8x64<Self>, i8x64<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i8x64(self, a: i8x64<Self>) -> i8x64<Self> {
@@ -8334,6 +8423,11 @@ pub trait Simd:
         mask: mask8x64<Self>,
         merge: u8x64<Self>,
     ) -> u8x64<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u8x64(self, a: u8x64<Self>, b: u8x64<Self>) -> (u8x64<Self>, u8x64<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u8x64(self, a: u8x64<Self>) -> u8x64<Self> {
@@ -8885,6 +8979,11 @@ pub trait Simd:
         mask: mask16x32<Self>,
         merge: i16x32<Self>,
     ) -> i16x32<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i16x32(self, a: i16x32<Self>, b: i16x32<Self>) -> (i16x32<Self>, i16x32<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i16x32(self, a: i16x32<Self>) -> i16x32<Self> {
@@ -9339,6 +9438,11 @@ pub trait Simd:
         mask: mask16x32<Self>,
         merge: u16x32<Self>,
     ) -> u16x32<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u16x32(self, a: u16x32<Self>, b: u16x32<Self>) -> (u16x32<Self>, u16x32<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u16x32(self, a: u16x32<Self>) -> u16x32<Self> {
@@ -9933,6 +10037,11 @@ pub trait Simd:
         mask: mask32x16<Self>,
         merge: i32x16<Self>,
     ) -> i32x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i32x16(self, a: i32x16<Self>, b: i32x16<Self>) -> (i32x16<Self>, i32x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i32x16(self, a: i32x16<Self>) -> i32x16<Self> {
@@ -10387,6 +10496,11 @@ pub trait Simd:
         mask: mask32x16<Self>,
         merge: u32x16<Self>,
     ) -> u32x16<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u32x16(self, a: u32x16<Self>, b: u32x16<Self>) -> (u32x16<Self>, u32x16<Self>) {
+        (a.min(b), a.max(b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u32x16(self, a: u32x16<Self>) -> u32x16<Self> {
@@ -11471,6 +11585,12 @@ pub trait Simd:
         mask: mask64x8<Self>,
         merge: i64x8<Self>,
     ) -> i64x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_i64x8(self, a: i64x8<Self>, b: i64x8<Self>) -> (i64x8<Self>, i64x8<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_i64x8(self, a: i64x8<Self>) -> i64x8<Self> {
@@ -11870,6 +11990,12 @@ pub trait Simd:
         mask: mask64x8<Self>,
         merge: u64x8<Self>,
     ) -> u64x8<Self>;
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    #[inline(always)]
+    fn minmax_u64x8(self, a: u64x8<Self>, b: u64x8<Self>) -> (u64x8<Self>, u64x8<Self>) {
+        let swap = a.simd_gt(b);
+        (swap.select(b, a), swap.select(a, b))
+    }
     #[doc = "Return the number of ones in the binary representation of each element."]
     #[inline(always)]
     fn count_ones_u64x8(self, a: u64x8<Self>) -> u64x8<Self> {
@@ -13269,6 +13395,8 @@ pub trait SimdInt<S: Simd>:
     fn unsigned_abs(self) -> Self::Unsigned {
         self.abs().cast_unsigned()
     }
+    #[doc = "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering."]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self);
     #[doc = "Return the number of ones in the binary representation of each element."]
     fn count_ones(self) -> Self;
     #[doc = "Return the number of zeros in the binary representation of each element."]

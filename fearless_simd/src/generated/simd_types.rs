@@ -755,6 +755,10 @@ impl<S: Simd> crate::SimdInt<S> for i8x16<S> {
     type Unsigned = u8x16<S>;
     type Signed = i8x16<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i8x16(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i8x16(self)
     }
@@ -1143,6 +1147,10 @@ impl<S: Simd> SimdBase<S> for u8x16<S> {
 impl<S: Simd> crate::SimdInt<S> for u8x16<S> {
     type Unsigned = u8x16<S>;
     type Signed = i8x16<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u8x16(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u8x16(self)
@@ -1668,6 +1676,10 @@ impl<S: Simd> crate::SimdInt<S> for i16x8<S> {
     type Unsigned = u16x8<S>;
     type Signed = i16x8<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i16x8(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i16x8(self)
     }
@@ -2063,6 +2075,10 @@ impl<S: Simd> SimdBase<S> for u16x8<S> {
 impl<S: Simd> crate::SimdInt<S> for u16x8<S> {
     type Unsigned = u16x8<S>;
     type Signed = i16x8<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u16x8(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u16x8(self)
@@ -2598,6 +2614,10 @@ impl<S: Simd> crate::SimdInt<S> for i32x4<S> {
     type Unsigned = u32x4<S>;
     type Signed = i32x4<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i32x4(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i32x4(self)
     }
@@ -2993,6 +3013,10 @@ impl<S: Simd> SimdBase<S> for u32x4<S> {
 impl<S: Simd> crate::SimdInt<S> for u32x4<S> {
     type Unsigned = u32x4<S>;
     type Signed = i32x4<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u32x4(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u32x4(self)
@@ -3970,6 +3994,10 @@ impl<S: Simd> crate::SimdInt<S> for i64x2<S> {
     type Unsigned = u64x2<S>;
     type Signed = i64x2<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i64x2(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i64x2(self)
     }
@@ -4339,6 +4367,10 @@ impl<S: Simd> SimdBase<S> for u64x2<S> {
 impl<S: Simd> crate::SimdInt<S> for u64x2<S> {
     type Unsigned = u64x2<S>;
     type Signed = i64x2<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u64x2(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u64x2(self)
@@ -5311,6 +5343,10 @@ impl<S: Simd> crate::SimdInt<S> for i8x32<S> {
     type Unsigned = u8x32<S>;
     type Signed = i8x32<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i8x32(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i8x32(self)
     }
@@ -5710,6 +5746,10 @@ impl<S: Simd> SimdBase<S> for u8x32<S> {
 impl<S: Simd> crate::SimdInt<S> for u8x32<S> {
     type Unsigned = u8x32<S>;
     type Signed = i8x32<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u8x32(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u8x32(self)
@@ -6232,6 +6272,10 @@ impl<S: Simd> crate::SimdInt<S> for i16x16<S> {
     type Unsigned = u16x16<S>;
     type Signed = i16x16<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i16x16(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i16x16(self)
     }
@@ -6633,6 +6677,10 @@ impl<S: Simd> SimdBase<S> for u16x16<S> {
 impl<S: Simd> crate::SimdInt<S> for u16x16<S> {
     type Unsigned = u16x16<S>;
     type Signed = i16x16<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u16x16(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u16x16(self)
@@ -7177,6 +7225,10 @@ impl<S: Simd> crate::SimdInt<S> for i32x8<S> {
     type Unsigned = u32x8<S>;
     type Signed = i32x8<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i32x8(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i32x8(self)
     }
@@ -7579,6 +7631,10 @@ impl<S: Simd> SimdBase<S> for u32x8<S> {
 impl<S: Simd> crate::SimdInt<S> for u32x8<S> {
     type Unsigned = u32x8<S>;
     type Signed = i32x8<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u32x8(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u32x8(self)
@@ -8553,6 +8609,10 @@ impl<S: Simd> crate::SimdInt<S> for i64x4<S> {
     type Unsigned = u64x4<S>;
     type Signed = i64x4<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i64x4(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i64x4(self)
     }
@@ -8917,6 +8977,10 @@ impl<S: Simd> SimdBase<S> for u64x4<S> {
 impl<S: Simd> crate::SimdInt<S> for u64x4<S> {
     type Unsigned = u64x4<S>;
     type Signed = i64x4<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u64x4(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u64x4(self)
@@ -9927,6 +9991,10 @@ impl<S: Simd> crate::SimdInt<S> for i8x64<S> {
     type Unsigned = u8x64<S>;
     type Signed = i8x64<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i8x64(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i8x64(self)
     }
@@ -10352,6 +10420,10 @@ impl<S: Simd> SimdBase<S> for u8x64<S> {
 impl<S: Simd> crate::SimdInt<S> for u8x64<S> {
     type Unsigned = u8x64<S>;
     type Signed = i8x64<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u8x64(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u8x64(self)
@@ -10877,6 +10949,10 @@ impl<S: Simd> crate::SimdInt<S> for i16x32<S> {
     type Unsigned = u16x32<S>;
     type Signed = i16x32<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i16x32(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i16x32(self)
     }
@@ -11288,6 +11364,10 @@ impl<S: Simd> SimdBase<S> for u16x32<S> {
 impl<S: Simd> crate::SimdInt<S> for u16x32<S> {
     type Unsigned = u16x32<S>;
     type Signed = i16x32<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u16x32(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u16x32(self)
@@ -11828,6 +11908,10 @@ impl<S: Simd> crate::SimdInt<S> for i32x16<S> {
     type Unsigned = u32x16<S>;
     type Signed = i32x16<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i32x16(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i32x16(self)
     }
@@ -12235,6 +12319,10 @@ impl<S: Simd> SimdBase<S> for u32x16<S> {
 impl<S: Simd> crate::SimdInt<S> for u32x16<S> {
     type Unsigned = u32x16<S>;
     type Signed = i32x16<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u32x16(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u32x16(self)
@@ -13223,6 +13311,10 @@ impl<S: Simd> crate::SimdInt<S> for i64x8<S> {
     type Unsigned = u64x8<S>;
     type Signed = i64x8<S>;
     #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_i64x8(self, rhs.simd_into(self.simd))
+    }
+    #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_i64x8(self)
     }
@@ -13593,6 +13685,10 @@ impl<S: Simd> SimdBase<S> for u64x8<S> {
 impl<S: Simd> crate::SimdInt<S> for u64x8<S> {
     type Unsigned = u64x8<S>;
     type Signed = i64x8<S>;
+    #[inline(always)]
+    fn minmax(self, rhs: impl SimdInto<Self, S>) -> (Self, Self) {
+        self.simd.minmax_u64x8(self, rhs.simd_into(self.simd))
+    }
     #[inline(always)]
     fn count_ones(self) -> Self {
         self.simd.count_ones_u64x8(self)
