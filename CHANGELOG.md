@@ -16,6 +16,7 @@ The latest `fearless_simd_macros` release is 0.1.0 which was released on 2026-09
 
 - Added `SimdBase::partition` to stably group selected and unselected lanes and return the split index.
 - Added `SimdInt::minmax` to obtain both lane-wise integer extrema in one operation.
+- Added `SimdBase::load_prefix_or` and `store_prefix` to read and write slice tails without padding.
 
 ## [1.3.0][] (2026-11-24)
 

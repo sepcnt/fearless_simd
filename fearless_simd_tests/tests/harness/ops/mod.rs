@@ -99,6 +99,7 @@ mod simd_gt;
 mod simd_le;
 mod simd_lt;
 mod simd_ne;
+mod slice_prefix;
 mod slide;
 mod slide_within_blocks;
 mod splat;
