@@ -6768,6 +6768,10 @@ impl Simd for Avx512 {
         kernel(self, values, mask, merge)
     }
     #[inline(always)]
+    fn minmax_i64x2(self, a: i64x2<Self>, b: i64x2<Self>) -> (i64x2<Self>, i64x2<Self>) {
+        (a.min(b), a.max(b))
+    }
+    #[inline(always)]
     fn count_ones_i64x2(self, a: i64x2<Self>) -> i64x2<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -7352,6 +7356,10 @@ impl Simd for Avx512 {
             }
         );
         kernel(self, values, mask, merge)
+    }
+    #[inline(always)]
+    fn minmax_u64x2(self, a: u64x2<Self>, b: u64x2<Self>) -> (u64x2<Self>, u64x2<Self>) {
+        (a.min(b), a.max(b))
     }
     #[inline(always)]
     fn count_ones_u64x2(self, a: u64x2<Self>) -> u64x2<Self> {
@@ -14326,6 +14334,10 @@ impl Simd for Avx512 {
         kernel(self, values, mask, merge)
     }
     #[inline(always)]
+    fn minmax_i64x4(self, a: i64x4<Self>, b: i64x4<Self>) -> (i64x4<Self>, i64x4<Self>) {
+        (a.min(b), a.max(b))
+    }
+    #[inline(always)]
     fn count_ones_i64x4(self, a: i64x4<Self>) -> i64x4<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -14908,6 +14920,10 @@ impl Simd for Avx512 {
             }
         );
         kernel(self, values, mask, merge)
+    }
+    #[inline(always)]
+    fn minmax_u64x4(self, a: u64x4<Self>, b: u64x4<Self>) -> (u64x4<Self>, u64x4<Self>) {
+        (a.min(b), a.max(b))
     }
     #[inline(always)]
     fn count_ones_u64x4(self, a: u64x4<Self>) -> u64x4<Self> {
@@ -21917,6 +21933,10 @@ impl Simd for Avx512 {
         kernel(self, values, mask, merge)
     }
     #[inline(always)]
+    fn minmax_i64x8(self, a: i64x8<Self>, b: i64x8<Self>) -> (i64x8<Self>, i64x8<Self>) {
+        (a.min(b), a.max(b))
+    }
+    #[inline(always)]
     fn count_ones_i64x8(self, a: i64x8<Self>) -> i64x8<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -22509,6 +22529,10 @@ impl Simd for Avx512 {
             }
         );
         kernel(self, values, mask, merge)
+    }
+    #[inline(always)]
+    fn minmax_u64x8(self, a: u64x8<Self>, b: u64x8<Self>) -> (u64x8<Self>, u64x8<Self>) {
+        (a.min(b), a.max(b))
     }
     #[inline(always)]
     fn count_ones_u64x8(self, a: u64x8<Self>) -> u64x8<Self> {

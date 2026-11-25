@@ -697,6 +697,14 @@ pub(crate) fn generic_op(op: &Op, ty: &VecType) -> TokenStream {
         OpSig::Split { .. } | OpSig::Combine { .. } => {
             panic!("These operations require more information about the target platform");
         }
+        // Most backends have a 64-bit comparison but no integer qword min/max.
+        OpSig::MinMax if ty.scalar_bits == 64 => quote! {
+            #method_sig {
+                let swap = a.simd_gt(b);
+                (swap.select(b, a), swap.select(a, b))
+            }
+        },
+        OpSig::MinMax => quote! { #method_sig { (a.min(b), a.max(b)) } },
         OpSig::Interleave => {
             // interleave(a, b) = (zip_low(a, b), zip_high(a, b))
             // For wider vectors, we split each input, interleave the halves separately,
