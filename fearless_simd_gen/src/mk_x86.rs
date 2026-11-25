@@ -314,6 +314,7 @@ impl Level for X86 {
                     && vec_ty.n_bits() == 256
                     && matches!(vec_ty.scalar_bits, 32 | 64))
             }
+            OpSig::MinMax => !(*self == Self::Avx512 && vec_ty.scalar_bits == 64),
             OpSig::MaskToBitmask => !self.has_specialized_mask_to_bitmask(vec_ty),
             OpSig::MaskFromVector | OpSig::MaskToVector => !matches!(self, Self::Avx512),
             _ => true,
@@ -429,6 +430,7 @@ impl Level for X86 {
                 block_size,
                 block_count,
             } => self.handle_store_interleaved(op, vec_ty, block_size, block_count),
+            OpSig::MinMax => quote! { #method_sig { (a.min(b), a.max(b)) } },
             OpSig::Interleave => self.handle_interleave(op, vec_ty),
             OpSig::Deinterleave => self.handle_deinterleave(op, vec_ty),
         }

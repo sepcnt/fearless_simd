@@ -56,6 +56,7 @@ mod max;
 mod max_precise;
 mod min;
 mod min_precise;
+mod minmax;
 mod mul;
 mod mul_add;
 mod mul_add_precise;

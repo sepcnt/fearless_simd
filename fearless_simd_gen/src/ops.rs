@@ -81,6 +81,8 @@ pub(crate) enum OpSig {
     Zip { select_low: bool },
     /// Takes two arguments of a vector type, and returns that same vector type.
     Unzip { select_even: bool },
+    /// Returns the lane-wise integer minimum and maximum as a pair.
+    MinMax,
     /// Takes two arguments of a vector type, and returns a tuple of two vectors of the same type.
     /// This is equivalent to calling `zip_low` and `zip_high` and returning both results.
     Interleave,
@@ -359,7 +361,7 @@ impl Op {
             OpSig::Binary | OpSig::Zip { .. } | OpSig::Unzip { .. } => {
                 (vec![vec.clone(), vec.clone()], vec)
             }
-            OpSig::Interleave | OpSig::Deinterleave => {
+            OpSig::MinMax | OpSig::Interleave | OpSig::Deinterleave => {
                 (vec![vec.clone(), vec.clone()], quote! { (#vec, #vec) })
             }
             OpSig::Slide { .. } => (vec![vec.clone(), vec.clone()], vec),
@@ -514,7 +516,7 @@ impl Op {
                 let arg1 = &arg_names[1];
                 quote! { (#arg0, #arg1: impl SimdInto<Self, S>) -> Self }
             }
-            OpSig::Interleave | OpSig::Deinterleave => {
+            OpSig::MinMax | OpSig::Interleave | OpSig::Deinterleave => {
                 let arg0 = &arg_names[0];
                 let arg1 = &arg_names[1];
                 quote! { (#arg0, #arg1: impl SimdInto<Self, S>) -> (Self, Self) }
@@ -1311,6 +1313,12 @@ const FLOAT_OPS: &[Op] = &[
 ];
 
 const INT_OPS: &[Op] = &[
+    Op::new(
+        "minmax",
+        OpKind::VecTraitMethod,
+        OpSig::MinMax,
+        "Return the element-wise minimum and maximum, in that order. Each lane uses its integer type's signed or unsigned ordering.",
+    ),
     Op::new(
         "count_ones",
         OpKind::VecTraitMethod,
@@ -2181,9 +2189,8 @@ impl OpSig {
             return true;
         }
 
-        // Partition has a whole-vector default even for native sizes. Other wide
-        // operations not handled above can defer to split/combine.
-        matches!(self, Self::Partition) || vec_ty.n_bits() > native_width
+        // These operations have defaults at every width; the remaining wide operations split.
+        matches!(self, Self::Partition | Self::MinMax) || vec_ty.n_bits() > native_width
     }
 
     fn simd_trait_arg_names(&self) -> &'static [&'static str] {
@@ -2218,6 +2225,7 @@ impl OpSig {
             | Self::Combine { .. }
             | Self::Zip { .. }
             | Self::Unzip { .. }
+            | Self::MinMax
             | Self::Interleave
             | Self::Deinterleave
             | Self::Slide { .. } => &["a", "b"],
@@ -2266,6 +2274,7 @@ impl OpSig {
             | Self::Compare
             | Self::Zip { .. }
             | Self::Unzip { .. }
+            | Self::MinMax
             | Self::Interleave
             | Self::Deinterleave
             | Self::Slide { .. } => &["self", "rhs"],
@@ -2297,6 +2306,7 @@ impl OpSig {
             | Self::Combine { .. }
             | Self::Zip { .. }
             | Self::Unzip { .. }
+            | Self::MinMax
             | Self::Interleave
             | Self::Deinterleave => {
                 let arg0 = &arg_names[0];

@@ -1022,6 +1022,7 @@ impl Level for Neon {
             OpSig::MaskToVector => generic_mask_to_vector(method_sig, vec_ty),
             OpSig::MaskSet => generic_mask_set(method_sig, vec_ty),
             OpSig::UnaryClassify => generic_classify(method_sig, method, vec_ty),
+            OpSig::MinMax => crate::generic::generic_op(&op, vec_ty),
             OpSig::Interleave => {
                 let zip_low = generic_op_name("zip_low", vec_ty);
                 let zip_high = generic_op_name("zip_high", vec_ty);
