@@ -10,6 +10,12 @@ The latest published Fearless SIMD release is [1.3.0](#130-2026-11-24) which was
 You can find its changes [documented below](#130-2026-11-24).
 The latest `fearless_simd_macros` release is 0.1.0 which was released on 2026-09-21.
 
+## Unreleased
+
+### Added
+
+- Added `SimdBase::partition` to stably group selected and unselected lanes and return the split index.
+
 ## [1.3.0][] (2026-11-24)
 
 This release has an [MSRV][] of 1.89.

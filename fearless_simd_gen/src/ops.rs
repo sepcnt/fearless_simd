@@ -108,6 +108,8 @@ pub(crate) enum OpSig {
     /// Takes two vectors and a same-width byte-index vector, and returns the original vector type with its bytes
     /// dynamically selected from the concatenation of both vectors. Out-of-range indices produce zero.
     ConcatSwizzleDynPrecise,
+    /// Stably group lanes by a mask and return the size of the selected prefix.
+    Partition,
     /// Takes a byte vector, a same-width byte-lane mask, and optionally a merge vector.
     Compress { merge: bool },
     /// Takes a byte vector, a same-width byte-lane mask, and optionally a merge vector.
@@ -373,6 +375,13 @@ impl Op {
                     vec,
                 )
             }
+            OpSig::Partition => {
+                let mask = vec_ty.mask_ty().rust();
+                (
+                    vec![vec.clone(), quote! { #mask<#simd_ty> }],
+                    quote! { (#vec, usize) },
+                )
+            }
             OpSig::Compress { merge: false } | OpSig::Expand { merge: false } => {
                 let mask = vec_ty.mask_ty().rust();
                 (vec![vec.clone(), quote! { #mask<#simd_ty> }], vec)
@@ -476,6 +485,7 @@ impl Op {
             OpSig::LoadInterleaved { .. } | OpSig::StoreInterleaved { .. } => {
                 return None;
             }
+            OpSig::Partition => quote! { (self, mask: Self::Mask) -> (Self, usize) },
             OpSig::Compress { merge: false } | OpSig::Expand { merge: false } => {
                 quote! { (self, mask: Self::Mask) -> Self }
             }
@@ -771,6 +781,12 @@ const BASE_OPS: &[Op] = &[
         OpSig::ConcatSwizzleDynPrecise,
         "Dynamically select bytes from the concatenation of this vector and `rhs`.\n\n\
         The `indices` operand is a same-width byte vector. For each output byte, index values within the concatenated vectors' byte length select the corresponding byte: the first vector comes first, followed by `rhs`. Out-of-range indices produce zero.",
+    ),
+    Op::new(
+        "partition",
+        OpKind::BaseTraitMethod,
+        OpSig::Partition,
+        "Move the lanes selected by `{arg1}` to the front, returning the reordered vector and the number selected. Both groups retain their input order across the whole vector. Lane bits are unchanged, including NaN payloads and signed zeros.",
     ),
     Op::new(
         "compress",
@@ -2165,12 +2181,9 @@ impl OpSig {
             return true;
         }
 
-        // Otherwise, defer to split/combine if this is a wider operation than natively supported.
-        if vec_ty.n_bits() <= native_width {
-            return false;
-        }
-
-        true
+        // Partition has a whole-vector default even for native sizes. Other wide
+        // operations not handled above can defer to split/combine.
+        matches!(self, Self::Partition) || vec_ty.n_bits() > native_width
     }
 
     fn simd_trait_arg_names(&self) -> &'static [&'static str] {
@@ -2194,7 +2207,9 @@ impl OpSig {
                 &["a", "indices"]
             }
             Self::ConcatSwizzleDyn | Self::ConcatSwizzleDynPrecise => &["a", "b", "indices"],
-            Self::Compress { merge: false } | Self::Expand { merge: false } => &["values", "mask"],
+            Self::Partition | Self::Compress { merge: false } | Self::Expand { merge: false } => {
+                &["values", "mask"]
+            }
             Self::Compress { merge: true } | Self::Expand { merge: true } => {
                 &["values", "mask", "merge"]
             }
@@ -2226,7 +2241,9 @@ impl OpSig {
             | Self::MaskFromVector
             | Self::MaskToVector
             | Self::MaskSet => &[],
-            Self::Compress { merge: false } | Self::Expand { merge: false } => &["self", "mask"],
+            Self::Partition | Self::Compress { merge: false } | Self::Expand { merge: false } => {
+                &["self", "mask"]
+            }
             Self::Compress { merge: true } | Self::Expand { merge: true } => {
                 &["self", "mask", "merge"]
             }
@@ -2319,7 +2336,7 @@ impl OpSig {
             | Self::SwizzleDyn
             | Self::SwizzleDynPrecise
             | Self::Slide { .. } => return None,
-            Self::Compress { merge: false } | Self::Expand { merge: false } => {
+            Self::Partition | Self::Compress { merge: false } | Self::Expand { merge: false } => {
                 quote! { self, mask }
             }
             Self::Compress { merge: true } | Self::Expand { merge: true } => {

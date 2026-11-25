@@ -191,6 +191,10 @@ impl<S: Simd> SimdBase<S> for f32x4<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f32x4(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f32x4(self, mask)
     }
@@ -640,6 +644,10 @@ impl<S: Simd> SimdBase<S> for i8x16<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i8x16(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i8x16(self, mask)
     }
@@ -1027,6 +1035,10 @@ impl<S: Simd> SimdBase<S> for u8x16<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u8x16(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -1553,6 +1565,10 @@ impl<S: Simd> SimdBase<S> for i16x8<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i16x8(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i16x8(self, mask)
     }
@@ -1947,6 +1963,10 @@ impl<S: Simd> SimdBase<S> for u16x8<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u16x8(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -2483,6 +2503,10 @@ impl<S: Simd> SimdBase<S> for i32x4<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i32x4(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i32x4(self, mask)
     }
@@ -2877,6 +2901,10 @@ impl<S: Simd> SimdBase<S> for u32x4<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u32x4(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -3418,6 +3446,10 @@ impl<S: Simd> SimdBase<S> for f64x2<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f64x2(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f64x2(self, mask)
     }
@@ -3855,6 +3887,10 @@ impl<S: Simd> SimdBase<S> for i64x2<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i64x2(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i64x2(self, mask)
     }
@@ -4223,6 +4259,10 @@ impl<S: Simd> SimdBase<S> for u64x2<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u64x2(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -4736,6 +4776,10 @@ impl<S: Simd> SimdBase<S> for f32x8<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f32x8(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f32x8(self, mask)
     }
@@ -5196,6 +5240,10 @@ impl<S: Simd> SimdBase<S> for i8x32<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i8x32(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i8x32(self, mask)
     }
@@ -5594,6 +5642,10 @@ impl<S: Simd> SimdBase<S> for u8x32<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u8x32(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -6116,6 +6168,10 @@ impl<S: Simd> SimdBase<S> for i16x16<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i16x16(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i16x16(self, mask)
     }
@@ -6516,6 +6572,10 @@ impl<S: Simd> SimdBase<S> for u16x16<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u16x16(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -7062,6 +7122,10 @@ impl<S: Simd> SimdBase<S> for i32x8<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i32x8(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i32x8(self, mask)
     }
@@ -7463,6 +7527,10 @@ impl<S: Simd> SimdBase<S> for u32x8<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u32x8(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -8006,6 +8074,10 @@ impl<S: Simd> SimdBase<S> for f64x4<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f64x4(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f64x4(self, mask)
     }
@@ -8438,6 +8510,10 @@ impl<S: Simd> SimdBase<S> for i64x4<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i64x4(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i64x4(self, mask)
     }
@@ -8801,6 +8877,10 @@ impl<S: Simd> SimdBase<S> for u64x4<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u64x4(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -9325,6 +9405,10 @@ impl<S: Simd> SimdBase<S> for f32x16<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f32x16(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f32x16(self, mask)
     }
@@ -9812,6 +9896,10 @@ impl<S: Simd> SimdBase<S> for i8x64<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i8x64(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i8x64(self, mask)
     }
@@ -10236,6 +10324,10 @@ impl<S: Simd> SimdBase<S> for u8x64<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u8x64(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -10761,6 +10853,10 @@ impl<S: Simd> SimdBase<S> for i16x32<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i16x32(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i16x32(self, mask)
     }
@@ -11171,6 +11267,10 @@ impl<S: Simd> SimdBase<S> for u16x32<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u16x32(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -11712,6 +11812,10 @@ impl<S: Simd> SimdBase<S> for i32x16<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i32x16(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i32x16(self, mask)
     }
@@ -12118,6 +12222,10 @@ impl<S: Simd> SimdBase<S> for u32x16<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u32x16(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
@@ -12670,6 +12778,10 @@ impl<S: Simd> SimdBase<S> for f64x8<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_f64x8(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_f64x8(self, mask)
     }
@@ -13108,6 +13220,10 @@ impl<S: Simd> SimdBase<S> for i64x8<S> {
         )
     }
     #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_i64x8(self, mask)
+    }
+    #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {
         self.simd.compress_i64x8(self, mask)
     }
@@ -13477,6 +13593,10 @@ impl<S: Simd> SimdBase<S> for u64x8<S> {
             rhs.simd_into(self.simd),
             indices.simd_into(self.simd),
         )
+    }
+    #[inline(always)]
+    fn partition(self, mask: Self::Mask) -> (Self, usize) {
+        self.simd.partition_u64x8(self, mask)
     }
     #[inline(always)]
     fn compress(self, mask: Self::Mask) -> Self {

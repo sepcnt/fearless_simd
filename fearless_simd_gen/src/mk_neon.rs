@@ -945,6 +945,17 @@ impl Level for Neon {
                     }
                 })
             }
+            OpSig::Partition => {
+                let table = format_ident!("PARTITION_{}", vec_ty.scalar_bits);
+                let lane_mask = Literal::usize_unsuffixed((1 << vec_ty.len) - 1);
+                quote! {
+                    #method_sig {
+                        let bits = mask.to_bitmask() as usize & #lane_mask;
+                        let indices = u8x32::simd_from(self, crate::support::neon_partition::#table[bits].0);
+                        (values.swizzle_dyn(indices), bits.count_ones() as usize)
+                    }
+                }
+            }
             OpSig::Compress { .. } | OpSig::Expand { .. }
                 if vec_ty.n_bits() == 128 && matches!(vec_ty.scalar_bits, 16 | 32 | 64) =>
             {
@@ -1033,7 +1044,9 @@ impl Level for Neon {
     }
 
     fn should_use_generic_op(&self, op: &Op, vec_ty: &VecType) -> bool {
-        if matches!(op.sig, OpSig::MaskToBitmask) {
+        if matches!(op.sig, OpSig::Partition) {
+            !(vec_ty.n_bits() == 256 && matches!(vec_ty.scalar_bits, 32 | 64))
+        } else if matches!(op.sig, OpSig::MaskToBitmask) {
             false
         } else {
             op.sig.should_use_generic_op(vec_ty, self.native_width())

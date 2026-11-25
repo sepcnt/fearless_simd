@@ -7972,6 +7972,30 @@ impl Simd for Avx2 {
         })
     }
     #[inline(always)]
+    fn partition_f32x8(self, values: f32x8<Self>, mask: mask32x8<Self>) -> (f32x8<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: f32x8<Avx2>,
+                mask: mask32x8<Avx2>,
+            ) -> (f32x8<Avx2>, usize) {
+                let bits = token.to_bitmask_mask32x8(mask) as usize & 255;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_32[bits],
+                );
+                let reordered =
+                    _mm256_permutevar8x32_epi32(_mm256_castps_si256(values.into()), control);
+                let result = reordered;
+                (
+                    _mm256_castsi256_ps(result).simd_into(token),
+                    bits.count_ones() as usize,
+                )
+            }
+        );
+        kernel(self, values, mask)
+    }
+    #[inline(always)]
     fn compress_f32x8(self, values: f32x8<Self>, mask: mask32x8<Self>) -> f32x8<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -11999,6 +12023,26 @@ impl Simd for Avx2 {
         })
     }
     #[inline(always)]
+    fn partition_i32x8(self, values: i32x8<Self>, mask: mask32x8<Self>) -> (i32x8<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: i32x8<Avx2>,
+                mask: mask32x8<Avx2>,
+            ) -> (i32x8<Avx2>, usize) {
+                let bits = token.to_bitmask_mask32x8(mask) as usize & 255;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_32[bits],
+                );
+                let reordered = _mm256_permutevar8x32_epi32(values.into(), control);
+                let result = reordered;
+                (result.simd_into(token), bits.count_ones() as usize)
+            }
+        );
+        kernel(self, values, mask)
+    }
+    #[inline(always)]
     fn compress_i32x8(self, values: i32x8<Self>, mask: mask32x8<Self>) -> i32x8<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -12658,6 +12702,26 @@ impl Simd for Avx2 {
             val: crate::support::Aligned256(result),
             simd: self,
         })
+    }
+    #[inline(always)]
+    fn partition_u32x8(self, values: u32x8<Self>, mask: mask32x8<Self>) -> (u32x8<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: u32x8<Avx2>,
+                mask: mask32x8<Avx2>,
+            ) -> (u32x8<Avx2>, usize) {
+                let bits = token.to_bitmask_mask32x8(mask) as usize & 255;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_32[bits],
+                );
+                let reordered = _mm256_permutevar8x32_epi32(values.into(), control);
+                let result = reordered;
+                (result.simd_into(token), bits.count_ones() as usize)
+            }
+        );
+        kernel(self, values, mask)
     }
     #[inline(always)]
     fn compress_u32x8(self, values: u32x8<Self>, mask: mask32x8<Self>) -> u32x8<Self> {
@@ -13571,6 +13635,30 @@ impl Simd for Avx2 {
         })
     }
     #[inline(always)]
+    fn partition_f64x4(self, values: f64x4<Self>, mask: mask64x4<Self>) -> (f64x4<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: f64x4<Avx2>,
+                mask: mask64x4<Avx2>,
+            ) -> (f64x4<Avx2>, usize) {
+                let bits = token.to_bitmask_mask64x4(mask) as usize & 15;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_64[bits],
+                );
+                let reordered =
+                    _mm256_permutevar8x32_epi32(_mm256_castpd_si256(values.into()), control);
+                let result = reordered;
+                (
+                    _mm256_castsi256_pd(result).simd_into(token),
+                    bits.count_ones() as usize,
+                )
+            }
+        );
+        kernel(self, values, mask)
+    }
+    #[inline(always)]
     fn compress_f64x4(self, values: f64x4<Self>, mask: mask64x4<Self>) -> f64x4<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -14270,6 +14358,26 @@ impl Simd for Avx2 {
         })
     }
     #[inline(always)]
+    fn partition_i64x4(self, values: i64x4<Self>, mask: mask64x4<Self>) -> (i64x4<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: i64x4<Avx2>,
+                mask: mask64x4<Avx2>,
+            ) -> (i64x4<Avx2>, usize) {
+                let bits = token.to_bitmask_mask64x4(mask) as usize & 15;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_64[bits],
+                );
+                let reordered = _mm256_permutevar8x32_epi32(values.into(), control);
+                let result = reordered;
+                (result.simd_into(token), bits.count_ones() as usize)
+            }
+        );
+        kernel(self, values, mask)
+    }
+    #[inline(always)]
     fn compress_i64x4(self, values: i64x4<Self>, mask: mask64x4<Self>) -> i64x4<Self> {
         crate::kernel!(
             #[inline(always)]
@@ -14897,6 +15005,26 @@ impl Simd for Avx2 {
             val: crate::support::Aligned256(result),
             simd: self,
         })
+    }
+    #[inline(always)]
+    fn partition_u64x4(self, values: u64x4<Self>, mask: mask64x4<Self>) -> (u64x4<Self>, usize) {
+        crate::kernel!(
+            #[inline(always)]
+            fn kernel(
+                token: Avx2,
+                values: u64x4<Avx2>,
+                mask: mask64x4<Avx2>,
+            ) -> (u64x4<Avx2>, usize) {
+                let bits = token.to_bitmask_mask64x4(mask) as usize & 15;
+                let control: __m256i = crate::transmute::checked_transmute_copy(
+                    &crate::support::compact_256::COMPRESS_64[bits],
+                );
+                let reordered = _mm256_permutevar8x32_epi32(values.into(), control);
+                let result = reordered;
+                (result.simd_into(token), bits.count_ones() as usize)
+            }
+        );
+        kernel(self, values, mask)
     }
     #[inline(always)]
     fn compress_u64x4(self, values: u64x4<Self>, mask: mask64x4<Self>) -> u64x4<Self> {

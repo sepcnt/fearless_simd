@@ -612,7 +612,9 @@ impl Level for Fallback {
             OpSig::Compress { .. } | OpSig::Expand { .. } if *vec_ty != vec_ty.bytes_ty() => {
                 byte_compact_op(op, vec_ty)
             }
-            OpSig::Compress { .. } | OpSig::Expand { .. } => generic_op(&op, vec_ty),
+            OpSig::Partition | OpSig::Compress { .. } | OpSig::Expand { .. } => {
+                generic_op(&op, vec_ty)
+            }
             OpSig::Cvt {
                 target_ty,
                 scalar_bits,

@@ -309,6 +309,11 @@ impl Level for X86 {
 
         match op.sig {
             OpSig::MaskFromBitmask => !self.has_specialized_mask_from_bitmask(vec_ty),
+            OpSig::Partition => {
+                !(*self == Self::Avx2
+                    && vec_ty.n_bits() == 256
+                    && matches!(vec_ty.scalar_bits, 32 | 64))
+            }
             OpSig::MaskToBitmask => !self.has_specialized_mask_to_bitmask(vec_ty),
             OpSig::MaskFromVector | OpSig::MaskToVector => !matches!(self, Self::Avx512),
             _ => true,
@@ -367,6 +372,7 @@ impl Level for X86 {
             OpSig::SwizzleDynPrecise => self.handle_swizzle_dyn_precise(op, vec_ty),
             OpSig::ConcatSwizzleDyn => self.handle_concat_swizzle_dyn(op, vec_ty),
             OpSig::ConcatSwizzleDynPrecise => self.handle_concat_swizzle_dyn_precise(op, vec_ty),
+            OpSig::Partition => self.handle_avx2_dword_compact(op, vec_ty),
             OpSig::Compress { .. } | OpSig::Expand { .. } => {
                 if *self == Self::Avx512 {
                     self.handle_avx512_compact_op(op, vec_ty)
@@ -1462,6 +1468,7 @@ impl X86 {
             "requires dword/qword elements"
         );
         let (expand, merge) = match op.sig {
+            OpSig::Partition => (false, false),
             OpSig::Compress { merge } => (false, merge),
             OpSig::Expand { merge } => (true, merge),
             _ => unreachable!("only compact operations use dword permutations"),
@@ -1490,10 +1497,11 @@ impl X86 {
         let values = to_int(quote! { values });
         let merge_value = to_int(quote! { merge });
         let finish = match (expand, merge) {
+            (false, false) if matches!(op.sig, OpSig::Partition) => quote! { reordered },
             (false, false) => quote! {
                 _mm256_andnot_si256(_mm256_srai_epi32::<31>(control), reordered)
             },
-            // Valid controls 0..7 have no byte sign bits; -1 selects the merge.
+            // Only rejected lanes have all four byte sign bits set.
             (false, true) => quote! { _mm256_blendv_epi8(reordered, #merge_value, control) },
             // Expansion writes exactly the original mask lanes.
             (true, false) => quote! { _mm256_and_si256(reordered, mask.into()) },
@@ -1512,6 +1520,11 @@ impl X86 {
             quote! { result }
         };
         self.kernel_method(op, vec_ty, |token| {
+            let output = if matches!(op.sig, OpSig::Partition) {
+                quote! { (#result.simd_into(#token), bits.count_ones() as usize) }
+            } else {
+                quote! { #result.simd_into(#token) }
+            };
             quote! {
                 let bits = #token.#to_bitmask(mask) as usize & #lane_mask;
                 let control: __m256i = crate::transmute::checked_transmute_copy(
@@ -1519,7 +1532,7 @@ impl X86 {
                 );
                 let reordered = _mm256_permutevar8x32_epi32(#values, control);
                 let result = #finish;
-                #result.simd_into(#token)
+                #output
             }
         })
     }
