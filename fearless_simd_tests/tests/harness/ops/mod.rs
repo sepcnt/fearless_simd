@@ -68,6 +68,7 @@ mod not;
 mod or;
 mod pairwise_dot_product;
 mod pairwise_widening_add;
+mod partition;
 mod reduce_max;
 mod reduce_max_precise;
 mod reduce_min;

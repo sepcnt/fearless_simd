@@ -421,6 +421,12 @@ pub(crate) fn generic_op(op: &Op, ty: &VecType) -> TokenStream {
         | OpSig::ConcatSwizzleDynPrecise => {
             panic!("whole-vector swizzles cannot be done via split/combine");
         }
+        OpSig::Partition => quote! {
+            #method_sig {
+                let (lanes, count) = crate::support::partition_lanes(*values, mask.to_bitmask());
+                (lanes.simd_into(self), count)
+            }
+        },
         OpSig::Compress { merge: false } => {
             let merge_method = generic_op_name("compress_merge", ty);
             let ty = ty.rust();

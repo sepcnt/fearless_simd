@@ -6932,6 +6932,12 @@ impl Simd for Neon {
         })
     }
     #[inline(always)]
+    fn partition_f32x8(self, values: f32x8<Self>, mask: mask32x8<Self>) -> (f32x8<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 255;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_32[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
+    }
+    #[inline(always)]
     fn compress_f32x8(self, values: f32x8<Self>, mask: mask32x8<Self>) -> f32x8<Self> {
         let mask = mask8x32 {
             val: crate::transmute::checked_transmute_copy(&mask.val),
@@ -7835,6 +7841,12 @@ impl Simd for Neon {
         })
     }
     #[inline(always)]
+    fn partition_i32x8(self, values: i32x8<Self>, mask: mask32x8<Self>) -> (i32x8<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 255;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_32[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
+    }
+    #[inline(always)]
     fn compress_i32x8(self, values: i32x8<Self>, mask: mask32x8<Self>) -> i32x8<Self> {
         let mask = mask8x32 {
             val: crate::transmute::checked_transmute_copy(&mask.val),
@@ -7942,6 +7954,12 @@ impl Simd for Neon {
             val: crate::support::Aligned256(result),
             simd: self,
         })
+    }
+    #[inline(always)]
+    fn partition_u32x8(self, values: u32x8<Self>, mask: mask32x8<Self>) -> (u32x8<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 255;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_32[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
     }
     #[inline(always)]
     fn compress_u32x8(self, values: u32x8<Self>, mask: mask32x8<Self>) -> u32x8<Self> {
@@ -8145,6 +8163,12 @@ impl Simd for Neon {
         })
     }
     #[inline(always)]
+    fn partition_f64x4(self, values: f64x4<Self>, mask: mask64x4<Self>) -> (f64x4<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 15;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_64[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
+    }
+    #[inline(always)]
     fn compress_f64x4(self, values: f64x4<Self>, mask: mask64x4<Self>) -> f64x4<Self> {
         let mask = mask8x32 {
             val: crate::transmute::checked_transmute_copy(&mask.val),
@@ -8286,6 +8310,12 @@ impl Simd for Neon {
         })
     }
     #[inline(always)]
+    fn partition_i64x4(self, values: i64x4<Self>, mask: mask64x4<Self>) -> (i64x4<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 15;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_64[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
+    }
+    #[inline(always)]
     fn compress_i64x4(self, values: i64x4<Self>, mask: mask64x4<Self>) -> i64x4<Self> {
         let mask = mask8x32 {
             val: crate::transmute::checked_transmute_copy(&mask.val),
@@ -8393,6 +8423,12 @@ impl Simd for Neon {
             val: crate::support::Aligned256(result),
             simd: self,
         })
+    }
+    #[inline(always)]
+    fn partition_u64x4(self, values: u64x4<Self>, mask: mask64x4<Self>) -> (u64x4<Self>, usize) {
+        let bits = mask.to_bitmask() as usize & 15;
+        let indices = u8x32::simd_from(self, crate::support::neon_partition::PARTITION_64[bits].0);
+        (values.swizzle_dyn(indices), bits.count_ones() as usize)
     }
     #[inline(always)]
     fn compress_u64x4(self, values: u64x4<Self>, mask: mask64x4<Self>) -> u64x4<Self> {

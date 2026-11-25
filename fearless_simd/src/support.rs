@@ -121,6 +121,66 @@ pub(crate) mod compact_128 {
     pub(crate) static EXPAND_64: [Aligned128<[u8; 16]>; 4] = controls(8, true);
 }
 
+/// Reference permutation for vector shapes without a specialized implementation.
+#[inline(always)]
+pub(crate) fn partition_lanes<T: Copy, const N: usize>(
+    values: [T; N],
+    bits: u64,
+) -> ([T; N], usize) {
+    let count = bits.count_ones() as usize;
+    let (mut yes, mut no) = (0, count);
+    let mut lanes = values;
+    for (i, value) in values.into_iter().enumerate() {
+        let dst = if bits & (1 << i) != 0 {
+            &mut yes
+        } else {
+            &mut no
+        };
+        lanes[*dst] = value;
+        *dst += 1;
+    }
+    (lanes, count)
+}
+
+#[cfg(target_arch = "aarch64")]
+pub(crate) mod neon_partition {
+    use super::Aligned256;
+
+    #[allow(
+        clippy::cast_possible_truncation,
+        reason = "Byte offsets are less than 32"
+    )]
+    const fn controls<const MASKS: usize>(lane_bytes: usize) -> [Aligned256<[u8; 32]>; MASKS] {
+        let mut table = [Aligned256([0; 32]); MASKS];
+        let mut mask: usize = 0;
+        while mask < MASKS {
+            let (mut yes, mut no) = (0, mask.count_ones() as usize);
+            let mut lane = 0;
+            while lane < 32 / lane_bytes {
+                let dst = if mask & (1 << lane) != 0 {
+                    let dst = yes;
+                    yes += 1;
+                    dst
+                } else {
+                    let dst = no;
+                    no += 1;
+                    dst
+                };
+                let mut b = 0;
+                while b < lane_bytes {
+                    table[mask].0[dst * lane_bytes + b] = (lane * lane_bytes + b) as u8;
+                    b += 1;
+                }
+                lane += 1;
+            }
+            mask += 1;
+        }
+        table
+    }
+    pub(crate) static PARTITION_32: [Aligned256<[u8; 32]>; 256] = controls(4);
+    pub(crate) static PARTITION_64: [Aligned256<[u8; 32]>; 16] = controls(8);
+}
+
 /// Dword-permutation controls for whole 32- or 64-bit elements in an AVX2 vector.
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 pub(crate) mod compact_256 {
@@ -141,25 +201,35 @@ pub(crate) mod compact_256 {
             N == 1 << lanes,
             "one control row is required per selection mask"
         );
-        // VPERMD only uses the low three index bits. The -1 sentinel separately
-        // identifies inactive lanes for zero/merge fill after the permutation.
+        // VPERMD only reads the low three bits. In a compress row these encode a
+        // stable partition; the high bits mark rejected lanes for zero/merge fill.
         let mut table = [Aligned256([-1; 8]); N];
-        let mut mask = 0;
+        let mut mask: usize = 0;
         while mask < N {
             let mut selected = 0;
+            let mut rejected = mask.count_ones() as usize;
             let mut lane = 0;
             while lane < lanes {
-                if mask & (1 << lane) != 0 {
+                let keep = mask & (1 << lane) != 0;
+                if keep || !expand {
                     let source = if expand { selected } else { lane };
-                    let destination = if expand { lane } else { selected };
+                    let destination = if expand {
+                        lane
+                    } else if keep {
+                        selected
+                    } else {
+                        rejected
+                    };
+                    let tag = if keep { 0 } else { !7 };
                     let mut dword = 0;
                     while dword < element_dwords {
                         // Adjacent dwords of a qword always move together.
                         table[mask].0[destination * element_dwords + dword] =
-                            (source * element_dwords + dword) as i32;
+                            tag | (source * element_dwords + dword) as i32;
                         dword += 1;
                     }
-                    selected += 1;
+                    selected += keep as usize;
+                    rejected += (!keep) as usize;
                 }
                 lane += 1;
             }

@@ -1287,6 +1287,7 @@ impl Level for WasmSimd128 {
                 }
                 _ => unreachable!(),
             },
+            OpSig::Partition => crate::generic::generic_op(&op, vec_ty),
             OpSig::Compress { .. } | OpSig::Expand { .. }
                 if vec_ty.n_bits() == 128 && matches!(vec_ty.scalar_bits, 16 | 32 | 64) =>
             {
